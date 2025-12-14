@@ -1,0 +1,47 @@
+# 【网络拦截】屏蔽韩小圈广告/追踪域名（适配包名：com.babycloud.hanju）
+||ad.hanju.tv^$domain=com.babycloud.hanju
+||ads.hanju.tv^$domain=com.babycloud.hanju
+||track.hanju.tv^$domain=com.babycloud.hanju
+||analytics.hanju.tv^$domain=com.babycloud.hanju
+||push.hanju.tv^$domain=com.babycloud.hanju
+||banner.hanju.tv^$domain=com.babycloud.hanju
+||promo.hanju.tv^$domain=com.babycloud.hanju
+# 通用广告平台拦截（仅对韩小圈生效）
+||admob.com^$domain=com.babycloud.hanju
+||googleads.g.doubleclick.net^$domain=com.babycloud.hanju
+||baiduads.com^$domain=com.babycloud.hanju
+||bytedance.com/ads^$domain=com.babycloud.hanju
+||sinaads.com^$domain=com.babycloud.hanju
+||mmstat.com^$domain=com.babycloud.hanju
+# 【元素隐藏】屏蔽APP内广告UI元素
+# 开屏广告
+com.babycloud.hanju##[id*="splash_ad"]
+com.babycloud.hanju##[class*="splashAd"]
+com.babycloud.hanju##[name*="splash"]
+# 横幅广告
+com.babycloud.hanju##[id*="banner_ad"]
+com.babycloud.hanju##[class*="bannerAd"]
+com.babycloud.hanju##[layout_alignParentBottom="true"][height*="100dp"]
+# 插屏/弹窗广告
+com.babycloud.hanju##[id*="interstitial_ad"]
+com.babycloud.hanju##[class*="interstitialAd"]
+com.babycloud.hanju##[id*="popup_ad"]
+com.babycloud.hanju##[class*="popupAd"]
+# 悬浮广告
+com.babycloud.hanju##[id*="float_ad"]
+com.babycloud.hanju##[class*="floatAd"]
+# 播放页广告
+com.babycloud.hanju##[id*="play_ad"]
+com.babycloud.hanju##[class*="playAd"]
+com.babycloud.hanju##[below*="video_view"]
+# 【脚本阻断】阻止广告脚本执行
+com.babycloud.hanju#%#//scriptlet('prevent-setTimeout', 'ad')
+com.babycloud.hanju#%#//scriptlet('prevent-setInterval', 'ad')
+com.babycloud.hanju#%#//scriptlet('abort-on-property-read', 'adScript')
+com.babycloud.hanju#%#//scriptlet('abort-on-property-write', 'adConfig')
+# 补充拦截未知广告域名
+||hanju.tv/ad^$domain=com.babycloud.hanju
+||hanju.tv/promo^$domain=com.babycloud.hanju
+# 补充隐藏广告元素
+com.babycloud.hanju##[android:visibility="visible"][android:layout_width="match_parent"]:has(android:text*="广告")
+com.babycloud.hanju##[android:id*="ad_container"]
