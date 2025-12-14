@@ -1,47 +1,88 @@
-# 【网络拦截】屏蔽韩小圈广告/追踪域名（适配包名：com.babycloud.hanju）
+! 规则名称：韩小圈（韩剧TV）广告屏蔽规则
+! 适配应用：韩小圈（包名：com.babycloud.hanju）
+! 适配设备：小米15（Android系统）
+! 适配场景：路由器端AdGuard（全局WiFi环境生效）
+! 屏蔽范围：开屏广告、首页推荐广告、播放详情页广告、播放中广告、暂停广告
+! 更新时间：2025-12（随APP版本迭代更新）
+! GitHub仓库地址：[此处替换为你的GitHub仓库URL]
+
+! ##############################################
+! 1. 核心广告域名拦截（阻断广告资源加载）
+! ##############################################
+! 韩小圈官方广告域名
 ||ad.hanju.tv^$domain=com.babycloud.hanju
 ||ads.hanju.tv^$domain=com.babycloud.hanju
-||track.hanju.tv^$domain=com.babycloud.hanju
-||analytics.hanju.tv^$domain=com.babycloud.hanju
-||push.hanju.tv^$domain=com.babycloud.hanju
-||banner.hanju.tv^$domain=com.babycloud.hanju
+||ad.hanjuapi.com^$domain=com.babycloud.hanju
+||ads.hanjuapi.com^$domain=com.babycloud.hanju
 ||promo.hanju.tv^$domain=com.babycloud.hanju
-# 通用广告平台拦截（仅对韩小圈生效）
+||banner.hanju.tv^$domain=com.babycloud.hanju
+||pop.hanju.tv^$domain=com.babycloud.hanju
+||interstitial.hanju.tv^$domain=com.babycloud.hanju
+! 韩小圈第三方广告平台域名（播放中/暂停广告常用）
 ||admob.com^$domain=com.babycloud.hanju
 ||googleads.g.doubleclick.net^$domain=com.babycloud.hanju
-||baiduads.com^$domain=com.babycloud.hanju
 ||bytedance.com/ads^$domain=com.babycloud.hanju
+||pangle.cn^$domain=com.babycloud.hanju
+||ksadcdn.com^$domain=com.babycloud.hanju
+||baiduads.com^$domain=com.babycloud.hanju
 ||sinaads.com^$domain=com.babycloud.hanju
-||mmstat.com^$domain=com.babycloud.hanju
-# 【元素隐藏】屏蔽APP内广告UI元素
-# 开屏广告
+! 广告追踪/统计域名（减少广告推送精准度）
+||track.hanju.tv^$domain=com.babycloud.hanju
+||analytics.hanju.tv^$domain=com.babycloud.hanju
+||log.hanjuapi.com^$domain=com.babycloud.hanju
+||data.hanju.tv^$domain=com.babycloud.hanju
+
+! ##############################################
+! 2. APP内广告UI元素隐藏（清除视觉广告区域）
+! ##############################################
+! 开屏广告（含跳过按钮区域屏蔽）
 com.babycloud.hanju##[id*="splash_ad"]
-com.babycloud.hanju##[class*="splashAd"]
-com.babycloud.hanju##[name*="splash"]
-# 横幅广告
-com.babycloud.hanju##[id*="banner_ad"]
-com.babycloud.hanju##[class*="bannerAd"]
-com.babycloud.hanju##[layout_alignParentBottom="true"][height*="100dp"]
-# 插屏/弹窗广告
-com.babycloud.hanju##[id*="interstitial_ad"]
-com.babycloud.hanju##[class*="interstitialAd"]
-com.babycloud.hanju##[id*="popup_ad"]
-com.babycloud.hanju##[class*="popupAd"]
-# 悬浮广告
-com.babycloud.hanju##[id*="float_ad"]
-com.babycloud.hanju##[class*="floatAd"]
-# 播放页广告
+com.babycloud.hanju##[class*="SplashAdView"]
+com.babycloud.hanju##[name*="splash_ad_container"]
+com.babycloud.hanju##[layout_width="match_parent"][layout_height="match_parent"]:has([text*="跳过"])
+! 首页推荐广告（信息流广告卡片）
+com.babycloud.hanju##[id*="home_ad"]
+com.babycloud.hanju##[class*="HomeAdCard"]
+com.babycloud.hanju##[android:tag="ad_item"]
+com.babycloud.hanju##[layout_margin="16dp"][android:background="@drawable/ad_card_bg"]
+! 播放详情页广告（简介区/推荐栏广告）
+com.babycloud.hanju##[id*="detail_ad"]
+com.babycloud.hanju##[class*="DetailAdBanner"]
+com.babycloud.hanju##[below*="video_title"][android:height*="80dp"]
+com.babycloud.hanju##[android:text*="广告"]:parent([class*="RecommendList"])
+! 播放中广告（前置/中插广告）
 com.babycloud.hanju##[id*="play_ad"]
-com.babycloud.hanju##[class*="playAd"]
-com.babycloud.hanju##[below*="video_view"]
-# 【脚本阻断】阻止广告脚本执行
-com.babycloud.hanju#%#//scriptlet('prevent-setTimeout', 'ad')
-com.babycloud.hanju#%#//scriptlet('prevent-setInterval', 'ad')
-com.babycloud.hanju#%#//scriptlet('abort-on-property-read', 'adScript')
+com.babycloud.hanju##[class*="PlayAdOverlay"]
+com.babycloud.hanju##[android:visibility="visible"]:has([text*="广告剩余"])
+com.babycloud.hanju##[layout_alignParentTop="true"][layout_width="match_parent"]:has([class*="AdCountdown"])
+! 暂停广告（暂停时弹出广告）
+com.babycloud.hanju##[id*="pause_ad"]
+com.babycloud.hanju##[class*="PauseAdDialog"]
+com.babycloud.hanju##[android:alpha="0.95"]:has([class*="AdCloseBtn"])
+com.babycloud.hanju##[clickable="true"][android:layout_centerInParent="true"]:has([text*="继续播放"])
+
+! ##############################################
+! 3. 广告脚本/请求阻断（防止广告逻辑执行）
+! ##############################################
+! 阻断广告初始化脚本
+com.babycloud.hanju#%#//scriptlet('abort-on-property-read', 'AdSDK')
 com.babycloud.hanju#%#//scriptlet('abort-on-property-write', 'adConfig')
-# 补充拦截未知广告域名
+! 阻断广告定时器（防止广告延迟加载）
+com.babycloud.hanju#%#//scriptlet('prevent-setTimeout', 'adLoad')
+com.babycloud.hanju#%#//scriptlet('prevent-setInterval', 'adCheck')
+! 阻断广告点击/跳转逻辑
+com.babycloud.hanju#%#//scriptlet('prevent-addEventListener', 'click', 'ad')
+com.babycloud.hanju#%#//scriptlet('redirect', 'adClick', 'void(0)')
+
+! ##############################################
+! 4. 备用补充规则（应对APP版本更新后广告变异）
+! ##############################################
+! 补充未知广告域名
 ||hanju.tv/ad^$domain=com.babycloud.hanju
-||hanju.tv/promo^$domain=com.babycloud.hanju
-# 补充隐藏广告元素
-com.babycloud.hanju##[android:visibility="visible"][android:layout_width="match_parent"]:has(android:text*="广告")
+||hanjuapi.com/promo^$domain=com.babycloud.hanju
+! 补充通用广告元素
 com.babycloud.hanju##[android:id*="ad_container"]
+com.babycloud.hanju##[android:contentDescription*="广告"]
+com.babycloud.hanju##[android:text*="推广"]:parent([layout_width="match_parent"])
+! 屏蔽广告弹窗遮罩
+com.babycloud.hanju##[android:background="#CC000000"]:has([class*="AdDialog"])
